@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
     TVRemote window(nullptr);
     Ui::MainWindow tv_remote;
     tv_remote.setupUi(&window);
-    window.spinBox = tv_remote.spinBox;
+    window.label = tv_remote.label;
     window.progressBar = tv_remote.progressBar;
     window.resize(240, 680);
     window.show();

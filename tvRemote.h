@@ -3,16 +3,17 @@
 
 #include <QMainWindow>
 #include <QtWidgets/QProgressBar>
-#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QLabel>
 #include <QTime>
 #include "./ui_tvRemote.h"
+#include <iostream>
 
 class TVRemote : public QMainWindow
 {
     Q_OBJECT
 public:
     QProgressBar *progressBar = nullptr;
-    QSpinBox *spinBox = nullptr;
+    QLabel *label = nullptr;
     TVRemote (QWidget *parent) : QMainWindow(parent){}
 public slots:
     //channel input buttons
@@ -30,47 +31,51 @@ public slots:
 
     //channel switching functions by one position
     void upToChannel(){
-        if(spinBox->maximum() == spinBox->value())
+        int channelTemp = label->text().toInt();
+        if(channelTemp == channelMax)
         {
-            spinBox->setValue(spinBox->minimum());
+            label->setText(QString::number(channelMin));
         }
         else
         {
-            spinBox->setValue(spinBox->value() + 1);
+            label->setText(QString::number(channelTemp + 1));
         }
     }
 
     void downToChannel(){
-        if(spinBox->minimum() == spinBox->value())
+        int channelTemp = label->text().toInt();
+        if(channelTemp  == channelMin)
         {
-            spinBox->setValue(spinBox->maximum());
+            label->setText(QString::number(channelMax));
         }
         else
         {
-            spinBox->setValue(spinBox->value() - 1);
+            label->setText(QString::number(channelTemp - 1));
         }
 
     }
 
     //functions of increasing the progressBar by 10%
-    void upToVolume(){progressBar->setValue(progressBar->value() + 10);}
-    void downToVolume(){progressBar->setValue(progressBar->value() - 10);}
+    void upToVolume(){ progressBar->setValue(progressBar->value() + 10);}
+    void downToVolume(){ progressBar->setValue(progressBar->value() - 10);}
 signals:
 
 private:
 
     QString channelPTR;
     bool timeOut = false;
+    int channelMin = 0;
+    int channelMax = 99;
 
-    //inputChannel creates a delay of two seconds for entering the second number
+    //inputChannel creates a delay of one seconds for entering the second number
     void inputChennel()
     {
         timeOut = true;
-        QTime time = QTime::currentTime().addSecs(2);
+        QTime time = QTime::currentTime().addMSecs(500);
         while(QTime::currentTime() < time && channelPTR.size() < 2)
             QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 
-        spinBox->setValue(channelPTR.toInt());
+        label->setText(channelPTR);
         channelPTR = nullptr;
         timeOut = false;
     }
